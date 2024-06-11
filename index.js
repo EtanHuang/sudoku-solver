@@ -21,6 +21,7 @@ addEventListener("DOMContentLoaded", () => {
             input.type = 'number';
             input.className = 'cell';
             input.id = `cell-${i}-${j}`;
+            let previousValue = '';
 
             //make the input the last digit the user entered 
             input.addEventListener('input', (event) => {
@@ -29,24 +30,20 @@ addEventListener("DOMContentLoaded", () => {
 
 
                 if (raw_value == 0) {
-                    event.target.value = '';
+                    event.target.value = previousValue;
                     return;
                 }
-                if (raw_value == 0 && document.getElementById(`cell-i-j`).value != '') {
+                else if (isNaN(value) || value < 0 || /[^1-9]/.test(raw_value)) {
+                    event.target.value = previousValue;
                     return;
-                }
-                if(isNaN(value)) {
-                    console.log(isNaN(value));
-                    console.log(event.target.value);
-                    console.log(value);
-                    console.log(raw_value);
-                    event.target.value = raw_value.slice(0, -1);
                 }
                 else if (value >= 1 && value <= 9) {
                     event.target.value = value;
+                    previousValue = event.target.value;
                 } 
                 else if (value > 9) {
                     event.target.value = value % 10;
+                    previousValue = event.target.value;
                 }
                 // else {
                 //     event.target.value = '';
