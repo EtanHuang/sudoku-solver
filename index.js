@@ -45,11 +45,14 @@ addEventListener("DOMContentLoaded", () => {
                     event.target.value = value % 10;
                     previousValue = event.target.value;
                 }
-                // else {
-                //     event.target.value = '';
-                // }
+
                 console.log(document.getElementById(`cell-0-0`).value);
 
+            });
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Backspace') {
+                    previousValue = '';
+                }
             });
             cell.appendChild(input);
             row.appendChild(cell);
