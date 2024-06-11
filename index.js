@@ -10,6 +10,8 @@ addEventListener("DOMContentLoaded", () => {
     //console.log("Hello");
     const solveButton = document.getElementById("solve-btn");
     solveButton.addEventListener('click', solveSudoku);
+    const clearButton = document.getElementById("clear-btn");
+    clearButton.addEventListener('click', clearSudoku);
 
     for (let i = 0; i < 9; i++) {
         const row = document.createElement('tr');
@@ -21,17 +23,36 @@ addEventListener("DOMContentLoaded", () => {
             input.id = `cell-${i}-${j}`;
 
             //make the input the last digit the user entered 
-
             input.addEventListener('input', (event) => {
-                if (input.value == 0) {
+                let raw_value = event.target.value;
+                let value = parseInt(event.target.value, 10);
+
+
+                if (raw_value == 0) {
+                    event.target.value = '';
                     return;
                 }
-                let value = parseInt(event.target.value, 10);
-                if (value >= 1 && value <= 9) {
+                if (raw_value == 0 && document.getElementById(`cell-i-j`).value != '') {
+                    return;
+                }
+                if(isNaN(value)) {
+                    console.log(isNaN(value));
+                    console.log(event.target.value);
+                    console.log(value);
+                    console.log(raw_value);
+                    event.target.value = raw_value.slice(0, -1);
+                }
+                else if (value >= 1 && value <= 9) {
                     event.target.value = value;
-                } else if (value > 9) {
+                } 
+                else if (value > 9) {
                     event.target.value = value % 10;
                 }
+                // else {
+                //     event.target.value = '';
+                // }
+                console.log(document.getElementById(`cell-0-0`).value);
+
             });
             cell.appendChild(input);
             row.appendChild(cell);
@@ -51,6 +72,18 @@ function empty() {
         }
     }
     return ret == 81;
+}
+
+function clearSudoku() {
+    for (let i = 0; i < 9; i++) {
+        sudokuArray[i] = [];
+        for (let j = 0; j < 9; j++) {
+            sudokuArray[i][j] = 0;
+            const cellId = `cell-${i}-${j}`;
+            const cell = document.getElementById(cellId);
+            cell.value = null;
+        }
+    }
 }
 
 function valid() {
@@ -79,8 +112,8 @@ function valid() {
         freq = {}
         for(let j = 0; j < 9; j++) {
             let num = 0
-            if(sudokuArray[i][j] != 0) {
-                num = sudokuArray[i][j];
+            if(sudokuArray[j][i] != 0) {
+                num = sudokuArray[j][i];
             }            
             if (num != 0 && num in freq) {
                 freq[num] += 1;
@@ -93,8 +126,9 @@ function valid() {
                 return false;
             }
         }
+        //console.log(freq);
     }
-
+    
     //check 3x3 grid
     for(let i = 0; i < 9; i += 3){
         for(let j = 0; j < 9; j += 3) {
@@ -131,7 +165,7 @@ function solve(row, col) {
     if(col == 9) {
         return solve(row + 1, 0);
     }
-    if(sudokuArray[row][col] == "") {
+    if(sudokuArray[row][col] == 0) {
         for(let i = 1; i <= 9; i++) {
             sudokuArray[row][col] = i;
             if (valid()) {
@@ -139,7 +173,7 @@ function solve(row, col) {
                     return true;
                }
             }
-            sudokuArray[row][col] = "";
+            sudokuArray[row][col] = 0;
         }
         return false;
     } else {
@@ -150,9 +184,8 @@ function solve(row, col) {
 
 
 function solveSudoku() {
-    // User did not enter anything
     // Fill out the Sudoku
-    //console.log(document.getElementById(`cell-0-0`).value);
+
     for(let i = 0; i < 9; i++) {
         for(let j = 0; j < 9; j++) {
             const cellId = `cell-${i}-${j}`;
@@ -163,6 +196,8 @@ function solveSudoku() {
             }
         }
     }
+
+    // User did not enter anything
     if (empty()) {
         alert("Please enter a number!");
         return;
@@ -183,7 +218,7 @@ function solveSudoku() {
         for(let j = 0; j < 9; j++) {
             const cellId = `cell-${i}-${j}`;
             const cell = document.getElementById(cellId);
-            // = sudokuArray[i][j];
+            cell.value = sudokuArray[i][j];
         }
     }
 }
